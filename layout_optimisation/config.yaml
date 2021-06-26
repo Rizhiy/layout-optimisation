@@ -1,0 +1,9 @@
+accuracy: 0.97
+num_layers: 5
+keys_per_row:
+  NUM: 7
+  TOP: 7
+  HOM: 7
+  BOT: 6
+  MOD: 5
+  TMB: 3
