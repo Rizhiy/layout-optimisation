@@ -1,10 +1,10 @@
 from pathlib import Path
 from typing import Tuple
 
-from .base import Hand, KeyMap, Row
+from .base import Finger, Hand, KeyMap, Row
 
 
-def generate_hand_and_row_maps(key_map: KeyMap, cfg: dict) -> Tuple[KeyMap, KeyMap]:
+def generate_hand_and_row_maps(template: KeyMap, cfg: dict) -> Tuple[KeyMap, KeyMap]:
     hands = []
     rows = []
     for row_name, num_keys in cfg["keys_per_row"].items():
@@ -14,4 +14,12 @@ def generate_hand_and_row_maps(key_map: KeyMap, cfg: dict) -> Tuple[KeyMap, KeyM
         hands.extend(left_hand)
         hands.extend(right_hand)
         rows.extend(row)
-    return key_map(hands), key_map(rows)
+    return template(hands, "HANDS"), template(rows, "ROWS")
+
+
+def generate_finger_map(template: KeyMap, cfg: dict) -> KeyMap:
+    values = []
+    for row in Row:
+        row_values = cfg["fingers"][row.name]
+        values += row_values[::-1] + row_values
+    return template(values, "FINGERS")

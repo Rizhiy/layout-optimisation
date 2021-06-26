@@ -7,3 +7,33 @@ keys_per_row:
   BOT: 6
   MOD: 5
   TMB: 3
+# Right hand only, assume left hand is the same + 0.05
+# Use None for reserved keys
+key_penalties:
+  NUM: [20, 20, 15, 15, 15, 15, 15]
+  TOP: [20, 5, 3, 1.5, 2, 7.5, 15]
+  HOM: [10, 2, 0, 0,.5, 2, 4]
+  BOT: [3.5, 0, 2.0, 2.5, 4, 6]
+  MOD: [4, 4.5, 5, 5.5, 10]
+  TMB: [3, 0, 2]
+fingers:
+  NUM: [I, I, M, M, R, R, R]
+  TOP: [I, I, I, M, R, R, R]
+  HOM: [I, I, I, M, R, P, P]
+  BOT: [I, I, M, R, P, P]
+  MOD: [I, M, R, P, P]
+  TMB: [T, T, T]
+penalties:
+  same_finger: 5
+  long_jump_hand: 1
+  long_jump_finger: 10
+  long_jump_consecutive: 5
+  long_jump_sandwich: 3
+  roll_reversal: 10
+  same_hand: 0.5
+  alternating_hand: 0.5
+  roll_out: 0.125
+  roll_in: -0.125
+  twist: 10
+layer_costs: [0, 5, 5, 10, 10]
+
