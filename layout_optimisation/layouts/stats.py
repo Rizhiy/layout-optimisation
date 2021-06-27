@@ -21,5 +21,6 @@ def generate_finger_map(template: KeyMap, cfg: dict) -> KeyMap:
     values = []
     for row in Row:
         row_values = cfg["fingers"][row.name]
+        row_values = [getattr(Finger, value) for value in row_values]
         values += row_values[::-1] + row_values
     return template(values, "FINGERS")
