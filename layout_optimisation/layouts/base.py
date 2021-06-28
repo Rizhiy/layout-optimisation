@@ -103,8 +103,6 @@ class KeyMap:
             value = value.replace("\\\\", "\\")
             if value in replacements:
                 value = replacements[value]
-            if value and len(value) == 1:
-                value = value.upper()
             return f"{value:^{length}}"
 
         result = ""

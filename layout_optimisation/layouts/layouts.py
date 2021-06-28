@@ -10,13 +10,13 @@ QWERTY_N = list("`1234567890-=") + ["\b"]
 QWERTY_N += ["\t"] + list("qwert") + [None] * 2 + list("yuiop#")
 QWERTY_N += [None] + list("asdfg") + [None] * 2 + list("hjkl;'")
 QWERTY_N += [None] + list("\zxcvbnm,./")
-QWERTY_N += [None] * 5 + list("[]") + [None] * 3
+QWERTY_N += [None, None, "[", "↓", "↑", "←", "→", "]", None, None]
 QWERTY_N += [None] * 4 + [" "] + ["\n"]
 QWERTY_S = [None] + list("!@£$%^&*()_+") + [None]
-QWERTY_S += [None] * 13 + ["~"]
-QWERTY_S += [None] * 12 + list(':"')
-QWERTY_S += [None] + ["|"] + [None] * 7 + list("<>?")
-QWERTY_S += [None] * 5 + list("{}") + [None] * 3
+QWERTY_S += [None] + list("QWERT") + [None] * 2 + list("YUIOP~")
+QWERTY_S += [None] + list("ASDFG") + [None] * 2 + list('HJKL:"')
+QWERTY_S += [None] + list("|ZXCVBNM<>?")
+QWERTY_S += [None, None, "{", None, None, None, None, "}", None, None]
 QWERTY_S += [None] * 6
 QWERTY = Layout([template(QWERTY_N), template(QWERTY_S)])
 
@@ -42,11 +42,11 @@ RSTHD_N += [None] + list("/vgpbxw.;-") + [None]
 RSTHD_N += ["fn", None, "[", "↓", "↑", "←", "→", "]", None, None]
 RSTHD_N += ["e", "\b", None, None, "\n", " "]
 RSTHD_S = list("~&*()%") + [None] * 2 + list("^!@#$|")
-RSTHD_S += [None] * 10 + ["<"] + [None] * 2 + ["+"]
-RSTHD_S += [None] * 13 + ['"']
-RSTHD_S += [None] + ["?"] + [None] * 6 + list(">:_") + [None]
+RSTHD_S += [None] + list("JCYFK") + [None] * 2 + list("ZL<UQ+")
+RSTHD_S += [None] + list("RSTHD") + [None] * 2 + list('MNAIO"')
+RSTHD_S += [None] + list("?VGPBXW>:_") + [None]
 RSTHD_S += [None] * 2 + ["{"] + [None] * 4 + ["}"] + [None] * 2
-RSTHD_S += [None] * 6
+RSTHD_S += ["E"] + [None] * 5
 RSTHD = Layout([template(RSTHD_N), template(RSTHD_S)])
 
 BEALK_N = [r"\e"] + list("40123") + [None] * 2 + list("76598") + [None]
@@ -57,4 +57,18 @@ BEALK_N += [None] * 10
 BEALK_N += [" ", "\n", None, None, r"\t", None]
 BEALK = Layout([template(BEALK_N)])
 
-LAYOUTS = {"QWERTY": QWERTY, "COLEMAK": COLEMAK, "RSTHD": RSTHD, "BEALK": BEALK}
+MTGAP_N = [None] + list("12345") + [None] * 2 + list("67890q")
+MTGAP_N += list(";.pou-") + [None] * 2 + list('"dlcw:')
+MTGAP_N += [None] + list("inea,") + [None] * 2 + list("mhtsrx")
+MTGAP_N += [None] + list("(k'y_") + list("bfvg)") + [None]
+MTGAP_N += [None, "?", "\t"] + [None] * 4 + ["j", "z", None]
+MTGAP_N += [None, "\b", None, None, "\n", " "]
+MTGAP_S = [None] + list("`%/+#") + [None] * 2 + list("^<>{}Q")
+MTGAP_S += list(r"|\POU[") + [None] * 2 + list("]DLCW@")
+MTGAP_S += [None] + list("INEA*") + [None] * 2 + list("MHTSRX")
+MTGAP_S += [None] + list("&K=Y!") + list("BFVG$") + [None]
+MTGAP_S += [None, "~", None, "↓", "↑", "←", "→", "J", "Z", None]
+MTGAP_S += [None] * 6
+MTGAP = Layout([template(MTGAP_N), template(MTGAP_S)])
+
+LAYOUTS = {"QWERTY": QWERTY, "COLEMAK": COLEMAK, "RSTHD": RSTHD, "BEALK": BEALK, "MTGAP": MTGAP}

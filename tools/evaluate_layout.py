@@ -35,13 +35,16 @@ layout = LAYOUTS[args.name]
 layout.add_keyboard(keyboard)
 
 total_penalties = defaultdict(int)
+num_dirs = 0
 for dir_path in args.text_dir.glob("*"):
     if not dir_path.is_dir():
         continue
     dir_weight = dir_weights.get(dir_path.name, 1)
-    penalties, total_length = process_and_calculate(dir_path, layout, cfg)
-    if total_length == 0:
-        continue
+    penalties = process_and_calculate(dir_path, layout, cfg)
     for key, value in penalties.items():
-        total_penalties[key] += value * dir_weight / total_length
+        total_penalties[key] += value * dir_weight
+    num_dirs += 1
+
+for key, value in total_penalties.items():
+    total_penalties[key] = value / num_dirs
 print(total_penalties)
