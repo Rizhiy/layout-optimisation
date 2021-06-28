@@ -1,12 +1,14 @@
 import logging
-from enum import Enum
+from collections import defaultdict
 from pathlib import Path
 from typing import Dict, Tuple
 
 import numpy as np
 from tqdm import tqdm
 
-from layout_optimisation.layouts.base import Finger, KeyMap, Layout, Row
+from layout_optimisation.layouts.base import Finger, Keyboard, KeyMap, Layout, Row, generate_key_map_template
+from layout_optimisation.layouts.layouts import LAYOUTS
+from layout_optimisation.layouts.stats import generate_finger_map, generate_hand_and_row_maps
 from layout_optimisation.utils import process_text
 
 logger = logging.getLogger(__name__)
@@ -27,8 +29,9 @@ def generate_penalty_map(template: KeyMap, cfg: dict, none_value=100) -> KeyMap:
 
 LOWER_CASE = set(r"`1234567890-=qwertyuiop[]asdfghjkl;'#\zxcvbnm,./")
 UPPER_CASE = set(r'~!@#$%^&*()_+QWERTYUIOP{}ASDFGHJKL:"|ZXCVBNM<>?')
-SPECIAL = set({"\t", "\n", " "})
-CHARS_TO_TRACK = LOWER_CASE.union(UPPER_CASE).union(SPECIAL)
+SPACING = {"\t", "\n", " ", "\b"}
+ARROWS = {"↓", "↑", "←", "→"}
+CHARS_TO_TRACK = LOWER_CASE.union(UPPER_CASE).union(SPACING).union(ARROWS)
 
 
 def calc_long_jump(rows: np.array, sep: int = 1) -> Tuple[np.array, np.array, np.array]:
@@ -56,6 +59,8 @@ def calc_long_jump(rows: np.array, sep: int = 1) -> Tuple[np.array, np.array, np
 
 
 def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float]:
+    if len(text) == 0:
+        raise ValueError(f"Passed empty text into calculate_penalties")
     location_penalty = 0
     chars = []
     hands = []
@@ -63,9 +68,13 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
     rows = []
     layers = []
 
+    missed_chars = set()
     for char in tqdm(text, desc="Processing text"):
-        if char not in CHARS_TO_TRACK:
+        if char in missed_chars:
+            continue
+        if char not in CHARS_TO_TRACK and char not in missed_chars:
             logger.warning(f"Found char {char!r}, which is not tracked, skipping")
+            missed_chars.add(char)
             continue
         location_penalty += layout.get_location_penalty(char)
         chars.append(char)
@@ -73,8 +82,6 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
         fingers.append(layout.get_finger(char).value)
         rows.append(layout.get_row(char).value)
         layers.append(layout.get_layer_idx(char))
-
-    text_len = max(len(chars), 1)
 
     logger.info("Making arrays")
     chars = np.array(chars)
@@ -88,10 +95,12 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
     layers = np.array(layers)
     logger.info("Layers done")
 
+    text_len = len(chars)
+
     penalties = cfg["penalties"]
     logger.info("Calculating penalties")
     location_penalty += layout.get_location_penalty("\b") * text_len * cfg["backspace_mult"]
-    arrow_costs = [layout.get_location_penalty(char) for char in ["↓", "↑", "←", "→"]]
+    arrow_costs = [layout.get_location_penalty(char) for char in ARROWS]
     location_penalty += np.sum(arrow_costs) / 4 * text_len * cfg["arrow_mult"]
     location_penalty = penalties["location"] * location_penalty / text_len
     total = location_penalty
@@ -252,6 +261,7 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
         "roll_out": roll_out_penalty,
         "roll_reversal": roll_reversal_penalty,
         "twist": twist_penalty,
+        "finger_disbalance": finger_disbalance_penalty,
     }
 
 
@@ -264,4 +274,34 @@ def process_and_calculate(dir_path: Path, layout: Layout, cfg: dict) -> Dict[str
             full_text += "".join(f.readlines())
             full_text += "\n"
     full_text = process_text(full_text)
+    if len(full_text) == 0:
+        return defaultdict(float)
     return calculate_penalties(full_text, layout, cfg)
+
+
+def evaluate(name: str, text_dir: Path, cfg: dict, dir_weights: Dict[str, float] = None) -> Dict[str, float]:
+    dir_weights = dir_weights or {}
+    layout = LAYOUTS[name]
+    template = generate_key_map_template(cfg)
+
+    hand_map, row_map = generate_hand_and_row_maps(template, cfg)
+    finger_map = generate_finger_map(template, cfg)
+    penalty_map = generate_penalty_map(template, cfg)
+    keyboard = Keyboard(hand_map, finger_map, row_map, penalty_map)
+
+    layout.add_keyboard(keyboard)
+
+    total_penalties = defaultdict(int)
+    num_dirs = 0
+    for dir_path in text_dir.glob("*"):
+        if not dir_path.is_dir():
+            continue
+        dir_weight = dir_weights.get(dir_path.name, 1)
+        penalties = process_and_calculate(dir_path, layout, cfg)
+        for key, value in penalties.items():
+            total_penalties[key] += value * dir_weight
+        num_dirs += 1
+
+    for key, value in total_penalties.items():
+        total_penalties[key] = value / num_dirs
+    return total_penalties

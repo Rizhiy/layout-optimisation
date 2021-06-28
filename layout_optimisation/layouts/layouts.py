@@ -25,13 +25,13 @@ COLEMAK_N = list("`1234567890-=") + ["\b"]
 COLEMAK_N += ["\t"] + list("qwfpg") + [None] * 2 + list("jluy;#")
 COLEMAK_N += [None] + list("arstd") + [None] * 2 + list("hneio'")
 COLEMAK_N += [None] + list("\zxcvbkm,./")
-COLEMAK_N += [None] * 5 + list("[]") + [None] * 3
+COLEMAK_N += [None] * 3 + ["↓", "↑", "←", "→"] + ["[", "]", None]
 COLEMAK_N += [None] * 4 + [" "] + ["\n"]
 COLEMAK_S = [None] + list("!@£$%^&*()_+") + [None]
-COLEMAK_S += [None] * 12 + list(":~")
-COLEMAK_S += [None] * 13 + ['"']
-COLEMAK_S += [None] + ["|"] + [None] * 7 + list("<>?")
-COLEMAK_S += [None] * 5 + list("{}") + [None] * 3
+COLEMAK_S += [None] + list("QWFPG") + [None] * 2 + list("JLUY:~")
+COLEMAK_S += [None] + list("ARSTD") + [None] * 2 + list('HNEIO"')
+COLEMAK_S += [None] + list("|ZXCVBKM<>?")
+COLEMAK_S += [None] * 7 + list("{}") + [None] * 1
 COLEMAK_S += [None] * 6
 COLEMAK = Layout([template(COLEMAK_N), template(COLEMAK_S)])
 
@@ -49,13 +49,23 @@ RSTHD_S += [None] * 2 + ["{"] + [None] * 4 + ["}"] + [None] * 2
 RSTHD_S += ["E"] + [None] * 5
 RSTHD = Layout([template(RSTHD_N), template(RSTHD_S)])
 
-BEALK_N = [r"\e"] + list("40123") + [None] * 2 + list("76598") + [None]
-BEALK_N += [None] + list("qhoux") + [None] + ["\b"] + list("gcrfz") + [None]
-BEALK_N += list("-yiea@") + [None] + ["\d"] + list("dstnb;")
-BEALK_N += [None] + list("j?!k.wmlpv") + [None]
-BEALK_N += [None] * 10
-BEALK_N += [" ", "\n", None, None, r"\t", None]
-BEALK = Layout([template(BEALK_N)])
+BEAKL_N = [r"\e"] + list("40123") + [None] * 2 + list("76598") + [None]
+BEAKL_N += [None] + list("qhoux") + [None] + ["\b"] + list("gcrfz") + [None]
+BEAKL_N += list("-yiea.") + [None] + ["\d"] + list("dstnb;")
+BEAKL_N += [None] + list("j/,k'wmlpv") + [None]
+BEAKL_N += [None] * 3 + ["↓", "↑", "←", "→"] + [None] * 3
+BEAKL_N += [None, " ", "\n", None, "\t", None]
+BEAKL_S = [None] * 14
+BEAKL_S += [None] + list("QHOUX") + [None] * 2 + list("GCRFZ") + [None]
+BEAKL_S += [None] + list("YIEA@") + [None] * 2 + list("DSTNB") + [None]
+BEAKL_S += [None] + list("J?!K`WMLPV") + [None]
+BEAKL_S += [None] * 16
+BEAKL_A = [None] * 14
+BEAKL_A += [None] * 2 + list("<$>") + [None] * 4 + list("[_]") + [None] * 2
+BEAKL_A += [None] + list('\(")#') + [None] * 2 + list("%{=}|") + [None]
+BEAKL_A += [None] * 2 + list(":*+") + [None] * 2 + list("&^~") + [None] * 2
+BEAKL_A += [None] * 16
+BEAKL = Layout([template(BEAKL_N), template(BEAKL_S), template(BEAKL_A)])
 
 MTGAP_N = [None] + list("12345") + [None] * 2 + list("67890q")
 MTGAP_N += list(";.pou-") + [None] * 2 + list('"dlcw:')
@@ -71,4 +81,4 @@ MTGAP_S += [None, "~", None, "↓", "↑", "←", "→", "J", "Z", None]
 MTGAP_S += [None] * 6
 MTGAP = Layout([template(MTGAP_N), template(MTGAP_S)])
 
-LAYOUTS = {"QWERTY": QWERTY, "COLEMAK": COLEMAK, "RSTHD": RSTHD, "BEALK": BEALK, "MTGAP": MTGAP}
+LAYOUTS = {"QWERTY": QWERTY, "COLEMAK": COLEMAK, "RSTHD": RSTHD, "BEAKL": BEAKL, "MTGAP": MTGAP}
