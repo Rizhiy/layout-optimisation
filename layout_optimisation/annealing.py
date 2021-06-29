@@ -85,7 +85,8 @@ def run_annealing(cfg: dict, **kwargs) -> List[Layout]:
             stacked_layouts = p.map(func, layouts)
         new_layouts = []
         for proc_layouts in stacked_layouts:
-            new_layouts.extend(proc_layouts)
+            proc_layouts = sorted(proc_layouts, key=itemgetter(1))
+            new_layouts.extend(proc_layouts[: annealing["keep_top"]])
         new_layouts = sorted(new_layouts, key=itemgetter(1))
         t.set_description(f"Annealing outer loop, best score={new_layouts[0][1]:.3f}")
         layouts = [l for l, _ in new_layouts[: annealing["num_layouts"]]]

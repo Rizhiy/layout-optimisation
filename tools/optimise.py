@@ -23,6 +23,5 @@ dir_weights = dict(zip(keys, values))
 template = generate_key_map_template(cfg)
 keyboard = generate_keyboard(template, cfg)
 
-# TODO: There are just too many combination currently to expect it to finish in reasonable time
-# Need to optimise, probably remove shift layer, unusable keys (>10) and optimise fewer layers
 best_layout = run_annealing(cfg, template=template, keyboard=keyboard, text_dir=args.text_dir, dir_weights=dir_weights)
+print(best_layout.format(cfg))
