@@ -6,56 +6,27 @@ from typing import Dict, Tuple
 import numpy as np
 from tqdm import tqdm
 
-from layout_optimisation.layouts.base import Finger, Keyboard, KeyMap, Layout, Row, generate_key_map_template
-from layout_optimisation.layouts.layouts import LAYOUTS
-from layout_optimisation.layouts.stats import generate_finger_map, generate_hand_and_row_maps
+from layout_optimisation.layouts.base import Finger, Layout, Row
 from layout_optimisation.utils import process_text
 
 logger = logging.getLogger(__name__)
 
 
-def generate_penalty_map(template: KeyMap, cfg: dict, none_value=100) -> KeyMap:
-    values = []
-    for row in Row:
-        row_penalties = cfg["key_penalties"][row.name]
-        values += row_penalties[::-1] + row_penalties
-    for idx, value in enumerate(values):
-        if value is None:
-            values[idx] = none_value
-    values = [float(val) for val in values]
-
-    return template(values, "PENALTY")
-
-
-LOWER_CASE = set(r"`1234567890-=qwertyuiop[]asdfghjkl;'#\zxcvbnm,./")
-UPPER_CASE = set(r'~!@#$%^&*()_+QWERTYUIOP{}ASDFGHJKL:"|ZXCVBNM<>?')
+DIGITS = set("1234567890")
+LETTERS = set("qwertyuiopasdfghjklzxcvbnm")
+SPECIAL = set("`!\"$%^&*()-=_+[]{};'#:@~\|,./<>?")
 SPACING = {"\t", "\n", " ", "\b"}
 ARROWS = {"↓", "↑", "←", "→"}
-CHARS_TO_TRACK = LOWER_CASE.union(UPPER_CASE).union(SPACING).union(ARROWS)
+CHARS_TO_TRACK = DIGITS.union(LETTERS).union(SPECIAL).union(SPACING).union(ARROWS)
 
 
-def calc_long_jump(rows: np.array, sep: int = 1) -> Tuple[np.array, np.array, np.array]:
-    num_start = rows[:-sep] == Row.NUM.value
+def calc_long_jump(rows: np.array, sep: int = 1) -> np.array:
     top_start = rows[:-sep] == Row.TOP.value
-    hom_start = rows[:-sep] == Row.HOM.value
     bot_start = rows[:-sep] == Row.BOT.value
-    mod_start = rows[:-sep] == Row.MOD.value
-    num_end = rows[sep:] == Row.NUM.value
     top_end = rows[sep:] == Row.TOP.value
-    hom_end = rows[sep:] == Row.HOM.value
     bot_end = rows[sep:] == Row.BOT.value
-    mod_end = rows[sep:] == Row.MOD.value
-    super_long_jump = num_start & mod_end | mod_start & num_end
-    very_long_jump = num_start & bot_end | top_start & mod_end | bot_start & num_end | mod_start & top_end
-    long_jump = (
-        num_start & hom_end
-        | top_start & bot_end
-        | hom_start & mod_end
-        | hom_start & num_end
-        | bot_start & top_end
-        | mod_start & hom_end
-    )
-    return super_long_jump, very_long_jump, long_jump
+    long_jump = top_start & bot_end | bot_start & top_end
+    return long_jump
 
 
 def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float]:
@@ -69,7 +40,7 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
     layers = []
 
     missed_chars = set()
-    for char in tqdm(text, desc="Processing text"):
+    for char in tqdm(text, desc="Processing text", disable=cfg["disable_eval_tqdm"]):
         if char in missed_chars:
             continue
         if char not in CHARS_TO_TRACK and char not in missed_chars:
@@ -135,18 +106,10 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
     logger.info(f"Alternating hand: {alternating_hand_penalty:.3f}")
 
     # Long jumps
-    super_long_jump, very_long_jump, long_jump = calc_long_jump(rows)
+    long_jump = calc_long_jump(rows)
 
     # Same finger long jump
-    long_jump_finger_penalty = (
-        penalties["long_jump_finger"]
-        * (
-            np.sum(same_finger & super_long_jump) * 2
-            + np.sum(same_finger & very_long_jump) * 1.5
-            + np.sum(same_finger & long_jump)
-        )
-        / text_len
-    )
+    long_jump_finger_penalty = penalties["long_jump_finger"] * np.sum(same_finger & long_jump) / text_len
     total += long_jump_finger_penalty
     logger.info(f"Long jump finger: {long_jump_finger_penalty:.3f}")
 
@@ -164,44 +127,23 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
         | m_finger[:-1] & i_finger[1:]
     ) & same_hand
     long_jump_consecutive_penalty = (
-        penalties["long_jump_consecutive"]
-        * (
-            np.sum(consecutive_fingers & super_long_jump) * 2
-            + np.sum(consecutive_fingers & very_long_jump) * 1.5
-            + np.sum(consecutive_fingers & long_jump)
-        )
-        / text_len
+        penalties["long_jump_consecutive"] * (np.sum(consecutive_fingers & long_jump)) / text_len
     )
     total += long_jump_consecutive_penalty
     logger.info(f"Long jump consecutive: {long_jump_consecutive_penalty:.3f}")
 
     # Long jump same hand
-    long_jump_hand_penalty = (
-        penalties["long_jump_hand"]
-        * (
-            np.sum(same_hand & super_long_jump) * 2
-            + np.sum(same_hand & very_long_jump) * 1.5
-            + np.sum(same_hand & long_jump)
-        )
-        / text_len
-    )
+    long_jump_hand_penalty = penalties["long_jump_hand"] * (np.sum(same_hand & long_jump)) / text_len
     total += long_jump_hand_penalty
     logger.info(f"Long jump hand: {long_jump_hand_penalty:.3f}")
 
     # Long jump sandwich
     same_finger_2 = (fingers[:-2] == fingers[2:]) & (hands[:-2] == hands[2:])
-    super_long_jump, very_long_jump, long_jump = calc_long_jump(rows, sep=2)
-    long_jumps_sandwich_penalty = (
-        penalties["long_jump_sandwich"]
-        * (
-            np.sum(same_finger_2 & super_long_jump) * 2
-            + np.sum(same_finger_2 & very_long_jump) * 1.5
-            + np.sum(same_finger_2 & long_jump)
-        )
-        / text_len
-    )
+    long_jump = calc_long_jump(rows, sep=2)
+    long_jumps_sandwich_penalty = penalties["long_jump_sandwich"] * (np.sum(same_finger_2 & long_jump)) / text_len
     total += long_jumps_sandwich_penalty
     logger.info(f"Long jump sandwich: {long_jumps_sandwich_penalty:.3f}")
+
     # Rolls
     same_row = rows[:-1] == rows[1:]
     same_row_3 = same_row[:-1] & same_row[1:]
@@ -232,7 +174,7 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
     total += roll_reversal_penalty
     logger.info(f"Roll reversal: {roll_reversal_penalty:.3f}")
 
-    # Twist, only considering main rows here, hopefully other rows are penalised sufficiently on their own
+    # Twist, only considering main rows here
     descending = (rows[:-2] == Row.TOP.value) & (rows[1:-1] == Row.HOM.value) & (rows[2:] == Row.BOT.value)
     ascending = (rows[:-2] == Row.BOT.value) & (rows[1:-1] == Row.HOM.value) & (rows[2:] == Row.TOP.value)
     twist = (inbound | outbound) & (ascending | descending)
@@ -271,7 +213,8 @@ def process_and_calculate(dir_path: Path, layout: Layout, cfg: dict) -> Dict[str
         if file_path.is_dir():
             continue
         with file_path.open() as f:
-            full_text += "".join(f.readlines())
+            lines = f.readlines()[:: cfg["text_downsampling"]]
+            full_text += "".join(lines)
             full_text += "\n"
     full_text = process_text(full_text)
     if len(full_text) == 0:
@@ -279,17 +222,8 @@ def process_and_calculate(dir_path: Path, layout: Layout, cfg: dict) -> Dict[str
     return calculate_penalties(full_text, layout, cfg)
 
 
-def evaluate(name: str, text_dir: Path, cfg: dict, dir_weights: Dict[str, float] = None) -> Dict[str, float]:
+def evaluate(layout: Layout, text_dir: Path, cfg: dict, dir_weights: Dict[str, float] = None) -> Dict[str, float]:
     dir_weights = dir_weights or {}
-    layout = LAYOUTS[name]
-    template = generate_key_map_template(cfg)
-
-    hand_map, row_map = generate_hand_and_row_maps(template, cfg)
-    finger_map = generate_finger_map(template, cfg)
-    penalty_map = generate_penalty_map(template, cfg)
-    keyboard = Keyboard(hand_map, finger_map, row_map, penalty_map)
-
-    layout.add_keyboard(keyboard)
 
     total_penalties = defaultdict(int)
     num_dirs = 0

@@ -1,32 +1,33 @@
 backspace_mult: 0.03
 arrow_mult: 0.02
-num_layers: 5
 keys_per_row:
-  NUM: 7
-  TOP: 7
-  HOM: 7
-  BOT: 6
-  MOD: 5
+  NUM: 0
+  TOP: 5
+  HOM: 5
+  BOT: 5
+  MOD: 4
   TMB: 3
 # Right hand only, assume left hand is the same + 0.05
 # Use None for reserved keys
 key_penalties:
-  NUM: [20, 20, 15, 15, 15, 15, 15]
-  TOP: [20, 5, 3, 1.5, 2, 7.5, 15]
-  HOM: [10, 2, 0, 0,.5, 2, 4]
-  BOT: [3.5, 0, 2.0, 2.5, 4, 6]
-  MOD: [4, 4.5, 5, 5.5, 10]
+  NUM: []
+  TOP: [5, 3, 1.5, 2.0, 7.5]
+  HOM: [2, 0, 0.0, 0.5, 2.0]
+  BOT: [3.5, 0, 2.0, 2.5, 4]
+  MOD: [4, 4.5, 5, 5.5]
   TMB: [3, 0, 2]
+# Slight penalty to the left hand keys to force more common keys on the right hand
+left_hand_penalty: 0.05
 fingers:
-  NUM: [I, I, M, M, R, R, R]
-  TOP: [I, I, I, M, R, R, R]
-  HOM: [I, I, I, M, R, P, P]
-  BOT: [I, I, M, R, P, P]
-  MOD: [I, M, R, P, P]
+  NUM: []
+  TOP: [I, I, M, R, R]
+  HOM: [I, I, M, R, P]
+  BOT: [I, I, M, R, P]
+  MOD: [I, M, R, P]
   TMB: [T, T, T]
 penalties: # Some penalties are WPM drops from https://mathematicalmulticore.wordpress.com/2011/11/27/typing-data-preliminary-analysis/
   location: 1
-  layers: [0, 3, 3, 3, 10, 10]
+  layers: [0, 5, 5]
   same_finger: 21
   same_hand: 8
   alternating_hand: 5
@@ -38,5 +39,15 @@ penalties: # Some penalties are WPM drops from https://mathematicalmulticore.wor
   roll_out: 1
   roll_in: -10.0
   twist: 5
-  finger_disbalance: 4
-
+  finger_disbalance: 3
+annealing:
+  num_layers: 3 # Normal + 2 layers on thumbs
+  num_layouts: 64
+  init_temperature: 10
+  num_processes: 16
+  num_iters: 10000
+  iters_per_cycle: 10
+  cooling_rate: 10
+# Skip most lines to improve efficiency
+text_downsampling: 30
+disable_eval_tqdm: True

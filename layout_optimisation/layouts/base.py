@@ -1,13 +1,9 @@
 from __future__ import annotations
 
 import copy
-from enum import Enum, auto, unique
+from enum import Enum, auto
 from functools import lru_cache, partial
 from typing import List
-
-from dataclassy import dataclass
-
-from layout_optimisation.config import load_cfg
 
 
 class Finger(Enum):
@@ -66,6 +62,10 @@ class KeyMap:
             if value is not None:
                 first_type = type(value)
                 break
+        else:
+            self._values = values
+            self._initialised = True
+            return
 
         for val in values:
             assert isinstance(val, first_type) or val is None
@@ -81,6 +81,9 @@ class KeyMap:
     def name(self, name: str):
         assert isinstance(name, str)
         self._name = name
+
+    def __len__(self):
+        return self._required_length
 
     def __getitem__(self, idx: int):
         return self.values[idx]
@@ -168,6 +171,10 @@ class Layout:
 
         self._keyboard = keyboard
 
+    @property
+    def layers(self) -> List[KeyMap]:
+        return self._layers
+
     def add_keyboard(self, keyboard: Keyboard):
         if self._keyboard is not None:
             raise ValueError(f"Keyboard was already added")
@@ -208,9 +215,18 @@ class Layout:
     def get_location_penalty(self, char: str) -> int:
         return self._keyboard._penalties[self.get_index(char)]
 
+    def flatten(self, keys_required: int = None) -> List[str]:
+        all_keys = []
+        for layer in self.layers:
+            all_keys.extend(layer.values)
+        if keys_required is not None:
+            all_keys.extend([None] * (keys_required - len(all_keys)))
+        return all_keys
 
-def generate_key_map_template(cfg: dict):
-    total_keys = 0
-    for num_keys in Row.get_row_lengths(cfg):
-        total_keys += num_keys * 2
-    return KeyMap(required_length=total_keys)
+    @staticmethod
+    def from_flat(flat_keys: List[str], template: KeyMap, keyboard: Keyboard = None) -> Layout:
+        assert len(flat_keys) % len(template) == 0, "Flat keys don't align with template"
+        layers = []
+        for first_idx in range(0, len(flat_keys), len(template)):
+            layers.append(template(flat_keys[first_idx : first_idx + len(template)]))
+        return Layout(layers, keyboard)

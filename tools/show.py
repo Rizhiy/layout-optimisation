@@ -2,10 +2,15 @@ import argparse
 from pathlib import Path
 
 from layout_optimisation.config import cfg
-from layout_optimisation.layouts.base import Keyboard, generate_key_map_template
+from layout_optimisation.layouts.base import Keyboard
 from layout_optimisation.layouts.layouts import LAYOUTS
-from layout_optimisation.layouts.stats import generate_finger_map, generate_hand_and_row_maps
-from layout_optimisation.penalty import CHARS_TO_TRACK, generate_penalty_map
+from layout_optimisation.layouts.mapper import (
+    generate_finger_map,
+    generate_hand_and_row_maps,
+    generate_key_map_template,
+    generate_penalty_map,
+)
+from layout_optimisation.penalty import CHARS_TO_TRACK
 
 parser = argparse.ArgumentParser()
 parser.add_argument("name", type=str, choices=LAYOUTS.keys())
