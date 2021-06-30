@@ -18,7 +18,8 @@ LETTERS = set("qwertyuiopasdfghjklzxcvbnm")
 SPECIAL = set("`!\"$%^&*()-=_+[]{};'#:@~\|,./<>?")
 SPACING = {"\t", "\n", " ", "\b"}
 ARROWS = {"↓", "↑", "←", "→"}
-CHARS_TO_TRACK = DIGITS.union(LETTERS).union(SPECIAL).union(SPACING).union(ARROWS)
+EXTRA = {"\x1b"}
+CHARS_TO_TRACK = DIGITS.union(LETTERS).union(SPECIAL).union(SPACING).union(ARROWS).union(EXTRA)
 
 GROUPS = {"writing": LETTERS.union(SPACING), "digits": DIGITS, "arrows": ARROWS, "math_operators": set("+-*/")}
 
@@ -73,6 +74,7 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
 
     penalties = cfg["penalties"]
     logger.info("Calculating penalties")
+    location_penalty += layout.get_location_penalty("\x1b") * text_len * cfg["esc_mult"]
     location_penalty += layout.get_location_penalty("\b") * text_len * cfg["backspace_mult"]
     arrow_costs = [layout.get_location_penalty(char) for char in ARROWS]
     location_penalty += np.sum(arrow_costs) / 4 * text_len * cfg["arrow_mult"]

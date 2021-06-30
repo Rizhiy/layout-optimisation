@@ -1,3 +1,4 @@
+esc_mult: 0.04
 backspace_mult: 0.03
 arrow_mult: 0.02
 keys_per_row:
@@ -44,9 +45,14 @@ penalties: # Some penalties are WPM drops from https://mathematicalmulticore.wor
   frozen_keys: 1
 frozen_keys:
   "\t": 38
-  "\b": 41 
+  "\e": 40
+  "\b": 41
   " ": 42
   "\n": 43
+  "↓": 32
+  "↑": 33
+  "←": 34
+  "→": 35
 extra_groups:
   r_brackets: ["(", ")"]
   s_brackets: ["[", "]"]

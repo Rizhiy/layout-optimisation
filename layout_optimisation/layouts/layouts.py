@@ -12,60 +12,57 @@ DEFAULT_D += list('`~|/?_:"<>')
 DEFAULT_D += [None, "{", "'", "+", "-", "=", "}", None]
 DEFAULT_D += [None] * 6
 
+DEFAULT_BOTTOM = [None, "[", "↓", "↑", "←", "→", "]", None]
+DEFAULT_BOTTOM += ["\t", None, "\x1b", "\b", " ", "\n"]
+
+
 QWERTY_N = list("qwertyuiop")
 QWERTY_N += list("asdfghjkl;")
 QWERTY_N += list("zxcvbnm,.\\")
-QWERTY_N += [None, "[", "↓", "↑", "←", "→", "]", None]
-QWERTY_N += ["\t", None, None, "\b", " ", "\n"]
+QWERTY_N += DEFAULT_BOTTOM
 QWERTY = Layout([template(QWERTY_N), template(DEFAULT_D)])
 
 DVORAK_N = list("\\,.pyfgcrl")
 DVORAK_N += list("aoeuidhtns")
 DVORAK_N += list(";qjkxbmwvz")
-DVORAK_N += [None, "[", "↓", "↑", "←", "→", "]", None]
-DVORAK_N += ["\t", None, None, "\b", " ", "\n"]
+DVORAK_N += DEFAULT_BOTTOM
 DVORAK = Layout([template(DVORAK_N), template(DEFAULT_D)])
 
 COLEMAK_N = list("qwfpgjluy;")
 COLEMAK_N += list("arstdhneio")
 COLEMAK_N += list("zxcvbkm,.\\")
-COLEMAK_N += [None, "[", "↓", "↑", "←", "→", "]", None]
-COLEMAK_N += ["\t", None, None, "\b", " ", "\n"]
+COLEMAK_N += DEFAULT_BOTTOM
 COLEMAK = Layout([template(COLEMAK_N), template(DEFAULT_D)])
 
 WORKMAN_N = list("qdrwbjfup;")
 WORKMAN_N += list("ashtgyneoi")
 WORKMAN_N += list("zxmcvkl,.\\")
-WORKMAN_N += [None, "[", "↓", "↑", "←", "→", "]", None]
-WORKMAN_N += ["\t", None, None, "\b", " ", "\n"]
+WORKMAN_N += DEFAULT_BOTTOM
 WORKMAN = Layout([template(WORKMAN_N), template(DEFAULT_D)])
 
 MTGAP_N = list("\\pouqxdlcw")
 MTGAP_N += list("inea.mhtsr")
 MTGAP_N += list("jkzy,bfvg;")
-MTGAP_N += [None, "[", "↓", "↑", "←", "→", "]", None]
-MTGAP_N += ["\t", None, None, "\b", " ", "\n"]
+MTGAP_N += DEFAULT_BOTTOM
 MTGAP = Layout([template(MTGAP_N), template(DEFAULT_D)])
 
 RSTHD_N = list("jcyfkzl,uq")
 RSTHD_N += list("rsthdmnaio")
 RSTHD_N += list("\\vgpbxw.;") + [None]
 RSTHD_N += [None, "[", "↓", "↑", "←", "→", "]", None]
-RSTHD_N += ["\t", "e", None, "\b", " ", "\n"]
+RSTHD_N += ["\t", "e", "\x1b", "\b", " ", "\n"]
 RSTHD = Layout([template(RSTHD_N), template(DEFAULT_D)])
 
 HALMAK_N = list("wlrbz;qudj")
 HALMAK_N += list("shnt,.aeoi")
 HALMAK_N += list("fmvc\\gpxky")
-HALMAK_N += [None, "[", "↓", "↑", "←", "→", "]", None]
-HALMAK_N += ["\t", None, None, "\b", " ", "\n"]
+HALMAK_N += DEFAULT_BOTTOM
 HALMAK = Layout([template(HALMAK_N), template(DEFAULT_D)])
 
 BEAKL_N = list("qhouxgcrfz")
 BEAKL_N += list("yiea.dstnb")
 BEAKL_N += list("j\\,k;wmlpv")
-BEAKL_N += [None, "[", "↓", "↑", "←", "→", "]", None]
-BEAKL_N += ["\t", None, None, "\b", " ", "\n"]
+BEAKL_N += DEFAULT_BOTTOM
 BEAKL = Layout([template(BEAKL_N), template(DEFAULT_D)])
 
 LAYOUTS = {
