@@ -41,8 +41,9 @@ penalties: # Some penalties are WPM drops from https://mathematicalmulticore.wor
   roll_in: -10.0
   twist: 5
   finger_disbalance: 3
-  split_group: 0.5
+  split_group: 1
   frozen_keys: 1
+  blocked_indexes: 1
 frozen_keys:
   "\t": 38
   "\e": 40
@@ -53,11 +54,13 @@ frozen_keys:
   "↑": 33
   "←": 34
   "→": 35
+blocked_indexes: [82, 83, 84, 85, 86, 87]
 extra_groups:
   r_brackets: ["(", ")"]
   s_brackets: ["[", "]"]
   c_brackets: ["{", "}"]
   a_brackets: ["<", ">"]
+ignore_loc_penality_for_chars: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "-", "*", "/"]
 annealing:
   num_layers: 2
   num_layouts: 64

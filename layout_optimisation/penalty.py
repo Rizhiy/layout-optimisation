@@ -51,7 +51,8 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
             logger.warning(f"Found char {char!r}, which is not tracked, skipping")
             missed_chars.add(char)
             continue
-        location_penalty += layout.get_location_penalty(char)
+        if char not in cfg["ignore_loc_penality_for_chars"]:
+            location_penalty += layout.get_location_penalty(char)
         chars.append(char)
         hands.append(layout.get_hand(char).value)
         fingers.append(layout.get_finger(char).value)
@@ -200,7 +201,7 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
     for group_name, group in groups.items():
         group_layers = [layout.get_layer(char) for char in group]
         if len(set(group_layers)) > 1:
-            logger.info(f"Group {group_name} is split")
+            logger.debug(f"Group {group_name} is split")
             split_group_penalty += 1
     split_group_penalty *= penalties["split_group"]
     total += split_group_penalty
@@ -210,11 +211,21 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
     frozen_keys_penalty = 0
     for char, index in cfg["frozen_keys"].items():
         if layout.flatten().index(char) != index:
-            logger.info(f"Char {char!r} is in the wrong place")
+            logger.debug(f"Char {char!r} is in the wrong place")
             frozen_keys_penalty += 1
     frozen_keys_penalty *= penalties["frozen_keys"]
     total += frozen_keys_penalty
     logger.info(f"Frozen keys: {frozen_keys_penalty:.3f}")
+
+    # Blocked indexes, also a hack to prevent chars being assigned to certain positions
+    blocked_indexes_penalty = 0
+    for idx in cfg["blocked_indexes"]:
+        if layout.flatten()[idx] is not None:
+            logger.debug(f"Found key at index {idx}, which is supposed to be empty")
+            blocked_indexes_penalty += 1
+    blocked_indexes_penalty *= penalties["blocked_indexes"]
+    total += blocked_indexes_penalty
+    logger.info(f"Blocked keys: {blocked_indexes_penalty:.3f}")
 
     return {
         "total": total,
@@ -234,6 +245,7 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
         "finger_disbalance": finger_disbalance_penalty,
         "split_group": split_group_penalty,
         "frozen_keys": frozen_keys_penalty,
+        "blocked_indexes": blocked_indexes_penalty,
     }
 
 
