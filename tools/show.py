@@ -15,6 +15,7 @@ from layout_optimisation.penalty import CHARS_TO_TRACK
 parser = argparse.ArgumentParser()
 parser.add_argument("name", type=str, choices=LAYOUTS.keys())
 parser.add_argument("--show-penalties", action="store_true")
+parser.add_argument("--show-indexes", action="store_true", help="Show index for each position")
 args = parser.parse_args()
 
 template = generate_key_map_template(cfg)
@@ -29,6 +30,11 @@ print(layout.format(cfg))
 layout.add_keyboard(keyboard)
 if args.show_penalties:
     print(penalty_map.format(cfg))
+
+if args.show_indexes:
+    indexes = range(len(layout.flatten()))
+    indexes_layout = layout.from_flat(indexes, template)
+    print(indexes_layout.format(cfg))
 
 for char in CHARS_TO_TRACK:
     try:

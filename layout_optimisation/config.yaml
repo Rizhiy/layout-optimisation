@@ -40,8 +40,20 @@ penalties: # Some penalties are WPM drops from https://mathematicalmulticore.wor
   roll_in: -10.0
   twist: 5
   finger_disbalance: 3
+  split_group: 0.5
+  frozen_keys: 1
+frozen_keys:
+  "\t": 38
+  "\b": 41 
+  " ": 42
+  "\n": 43
+extra_groups:
+  r_brackets: ["(", ")"]
+  s_brackets: ["[", "]"]
+  c_brackets: ["{", "}"]
+  a_brackets: ["<", ">"]
 annealing:
-  num_layers: 3 # Normal + 2 layers on thumbs
+  num_layers: 2
   num_layouts: 64
   init_temperature: 10
   num_processes: 16

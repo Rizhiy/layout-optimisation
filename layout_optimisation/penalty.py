@@ -1,3 +1,4 @@
+import copy
 import logging
 from collections import defaultdict
 from pathlib import Path
@@ -18,6 +19,8 @@ SPECIAL = set("`!\"$%^&*()-=_+[]{};'#:@~\|,./<>?")
 SPACING = {"\t", "\n", " ", "\b"}
 ARROWS = {"↓", "↑", "←", "→"}
 CHARS_TO_TRACK = DIGITS.union(LETTERS).union(SPECIAL).union(SPACING).union(ARROWS)
+
+GROUPS = {"writing": LETTERS.union(SPACING), "digits": DIGITS, "arrows": ARROWS, "math_operators": set("+-*/")}
 
 
 def calc_long_jump(rows: np.array, sep: int = 1) -> np.array:
@@ -188,6 +191,29 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
     total += finger_disbalance_penalty
     logger.info(f"Finger disbalance: {finger_disbalance_penalty}")
 
+    # Split groups, similar keys split between layers
+    groups = copy.copy(GROUPS)
+    groups.update({name: set(values) for name, values in cfg["extra_groups"].items()})
+    split_group_penalty = 0
+    for group_name, group in groups.items():
+        group_layers = [layout.get_layer(char) for char in group]
+        if len(set(group_layers)) > 1:
+            logger.info(f"Group {group_name} is split")
+            split_group_penalty += 1
+    split_group_penalty *= penalties["split_group"]
+    total += split_group_penalty
+    logger.info(f"Split group: {split_group_penalty:.3f}")
+
+    # Frozen keys, kind of a hack, but an easy way to assign a key to a desired place
+    frozen_keys_penalty = 0
+    for char, index in cfg["frozen_keys"].items():
+        if layout.flatten().index(char) != index:
+            logger.info(f"Char {char!r} is in the wrong place")
+            frozen_keys_penalty += 1
+    frozen_keys_penalty *= penalties["frozen_keys"]
+    total += frozen_keys_penalty
+    logger.info(f"Frozen keys: {frozen_keys_penalty:.3f}")
+
     return {
         "total": total,
         "location": location_penalty,
@@ -204,6 +230,8 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
         "roll_reversal": roll_reversal_penalty,
         "twist": twist_penalty,
         "finger_disbalance": finger_disbalance_penalty,
+        "split_group": split_group_penalty,
+        "frozen_keys": frozen_keys_penalty,
     }
 
 
