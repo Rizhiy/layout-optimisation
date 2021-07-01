@@ -2,3 +2,4 @@ dataclassy
 pyyaml
 numpy
 pandas
+tqdm
