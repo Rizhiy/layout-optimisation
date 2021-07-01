@@ -44,8 +44,10 @@ penalties: # Some penalties are WPM drops from https://mathematicalmulticore.wor
   split_group: 1
   frozen_keys: 1
   blocked_indexes: 1
+# This should probably be rather passed in as a layout
 frozen_keys:
   "\t": 38
+  "e": 39
   "\e": 40
   "\b": 41
   " ": 42
@@ -54,6 +56,26 @@ frozen_keys:
   "↑": 33
   "←": 34
   "→": 35
+  "0": 70
+  "2": 60
+  "4": 61
+  "6": 62
+  "8": 63
+  "1": 67
+  "3": 57
+  "5": 56
+  "7": 55
+  "9": 54
+  "+": 58
+  "-": 59
+  "*": 68
+  "/": 69
+  "[": 18
+  "]": 19
+  ".": 15
+  ",": 25
+  ":": 14
+  "#": 24
 blocked_indexes: [82, 83, 84, 85, 86, 87]
 extra_groups:
   r_brackets: ["(", ")"]
