@@ -191,6 +191,7 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
     # Finger disbalance, count only index middle and ring fingers
     i_m_r = np.sum(i_finger), np.sum(m_finger), np.sum(r_finger)
     finger_disbalance_penalty = (max(i_m_r) - min(i_m_r)) / text_len
+    finger_disbalance_penalty *= penalties["finger_disbalance"]
     total += finger_disbalance_penalty
     logger.info(f"Finger disbalance: {finger_disbalance_penalty}")
 
@@ -225,7 +226,7 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
             blocked_indexes_penalty += 1
     blocked_indexes_penalty *= penalties["blocked_indexes"]
     total += blocked_indexes_penalty
-    logger.info(f"Blocked keys: {blocked_indexes_penalty:.3f}")
+    logger.info(f"Blocked indexes: {blocked_indexes_penalty:.3f}")
 
     return {
         "total": total,
@@ -264,20 +265,27 @@ def process_and_calculate(dir_path: Path, layout: Layout, cfg: dict) -> Dict[str
     return calculate_penalties(full_text, layout, cfg)
 
 
-def evaluate(layout: Layout, text_dir: Path, cfg: dict, dir_weights: Dict[str, float] = None) -> Dict[str, float]:
+def evaluate(
+    layout: Layout, text_dir: Path, cfg: dict, dir_weights: Dict[str, float] = None, no_forced=False
+) -> Dict[str, float]:
     dir_weights = dir_weights or {}
 
-    total_penalties = defaultdict(int)
-    num_dirs = 0
+    total_penalties = defaultdict(float)
     for dir_path in text_dir.glob("*"):
         if not dir_path.is_dir():
             continue
-        dir_weight = dir_weights.get(dir_path.name, 1)
+        if dir_path.name not in dir_weights:
+            dir_weights[dir_path.name] = 1
+        dir_weight = dir_weights[dir_path.name]
         penalties = process_and_calculate(dir_path, layout, cfg)
         for key, value in penalties.items():
             total_penalties[key] += value * dir_weight
-        num_dirs += 1
 
+    total_weight = sum(dir_weights.values())
     for key, value in total_penalties.items():
-        total_penalties[key] = value / num_dirs
+        total_penalties[key] = value / total_weight
+    if no_forced:
+        for key in ["split_group", "frozen_keys", "blocked_indexes"]:
+            total_penalties["total"] -= total_penalties[key]
+            del total_penalties[key]
     return total_penalties

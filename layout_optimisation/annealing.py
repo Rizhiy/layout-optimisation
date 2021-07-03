@@ -8,7 +8,7 @@ from operator import itemgetter
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-from tqdm import tqdm, trange
+from tqdm import trange
 
 from layout_optimisation.layouts.base import Keyboard, KeyMap, Layout
 from layout_optimisation.layouts.mapper import generate_key_map_template, generate_keyboard

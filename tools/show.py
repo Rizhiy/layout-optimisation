@@ -1,5 +1,4 @@
 import argparse
-from pathlib import Path
 
 from layout_optimisation.config import cfg
 from layout_optimisation.layouts.base import Keyboard
