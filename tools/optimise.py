@@ -4,7 +4,6 @@ from pathlib import Path
 
 from layout_optimisation.annealing import run_annealing
 from layout_optimisation.config import cfg
-from layout_optimisation.layouts.layouts import LAYOUTS
 from layout_optimisation.layouts.mapper import generate_key_map_template, generate_keyboard
 
 logging.basicConfig(level=logging.ERROR)
