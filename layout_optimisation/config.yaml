@@ -89,7 +89,7 @@ annealing:
   init_temperature: 10
   num_processes: 16
   num_iters: 10000
-  iters_per_cycle: 100 # Don't set it too low or one version will use up all slots
+  iters_per_cycle: 200 # Don't set it too low or one version will use up all slots
   keep_top: 2 # How many to keep from each pool
   cooling_rate: 10
 # Skip most lines to improve efficiency
