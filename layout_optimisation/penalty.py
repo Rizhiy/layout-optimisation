@@ -193,7 +193,7 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
     finger_disbalance_penalty = (max(i_m_r) - min(i_m_r)) / text_len
     finger_disbalance_penalty *= penalties["finger_disbalance"]
     total += finger_disbalance_penalty
-    logger.info(f"Finger disbalance: {finger_disbalance_penalty}")
+    logger.info(f"Finger disbalance: {finger_disbalance_penalty:.3f}")
 
     # Split groups, similar keys split between layers
     groups = copy.copy(GROUPS)
