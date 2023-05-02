@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from layout_optimisation.config import cfg
 from layout_optimisation.layouts.base import Layout
 from layout_optimisation.layouts.mapper import generate_key_map_template
@@ -134,7 +136,6 @@ TMP_D += list(")}`1*/0;{\\")
 TMP_D += ["<", None, None] + list("^!%") + [None, "~"]
 TMP_D += [None] * 6
 TMP = Layout([template(TMP_N), template(TMP_D)])
-
 
 LAYOUTS = {
     "QWERTY": QWERTY,

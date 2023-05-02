@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from typing import Tuple
 
-from .base import Finger, Hand, Keyboard, KeyMap, Layout, Row
+from .base import Finger, Hand, Keyboard, KeyMap, Row
 
 
 def generate_key_map_template(cfg: dict):
