@@ -87,11 +87,19 @@ annealing:
   num_layers: 2
   num_layouts: 64
   init_temperature: 10
-  num_processes: 32
+  final_temperature: 0.1
+  num_processes: 22
   num_iters: 20_000
-  iters_per_cycle: 200 # Don't set it too low or one version will use up all slots
-  keep_top: 2 # How many to keep from each pool
-  cooling_rate: 5
+  iters_per_cycle: 200  # Don't set it too low or one version will use up all slots
+  # How many to keep from each layout improvement
+  # It will take log_(keep_top)(num_layouts) loops for one version to dominate all trial slots
+  keep_top: 2
+  # This is per iteration, will be adjusted for loops
+  cooling_rate: 0.9999
 # Skip most lines to improve efficiency
 text_downsampling: 30
 disable_eval_tqdm: True
+dir_weights:
+  prose: 3
+  reddit: 2
+  code: 1

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import copy
 import logging
 import math
@@ -8,7 +10,7 @@ from operator import itemgetter
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-from tqdm import trange
+from tqdm import tqdm, trange
 
 from layout_optimisation.layouts.base import Keyboard, KeyMap, Layout
 from layout_optimisation.layouts.mapper import generate_key_map_template, generate_keyboard
@@ -71,27 +73,39 @@ def anneal(flat_keys: List[str], temperature: float, num_iters: int, **kwargs) -
     return best_layouts
 
 
-def run_annealing(cfg: dict, **kwargs) -> List[Layout]:
+def run_annealing(cfg: dict, **kwargs) -> Layout:
     layouts = generate_initial_layouts(cfg)
     annealing = cfg["annealing"]
     temperature = annealing["init_temperature"]
     num_iters = annealing["num_iters"]
     iters_per_cycle = annealing["iters_per_cycle"]
-    kwargs.update({"cfg": cfg})
+    num_cycles = num_iters // iters_per_cycle
+    cooling_rate = (annealing["final_temperature"] / temperature) ** (1 / num_cycles)
 
-    t = trange(num_iters // iters_per_cycle, desc="Annealing")
-    for _ in t:
-        with Pool(annealing["num_processes"]) as p:
-            func = partial(anneal, temperature=temperature, num_iters=iters_per_cycle, **kwargs)
-            stacked_layouts = p.map(func, layouts)
-        new_layouts = []
-        for proc_layouts in stacked_layouts:
-            proc_layouts = sorted(proc_layouts, key=itemgetter(1))
-            new_layouts.extend(proc_layouts[: annealing["keep_top"]])
-        new_layouts = sorted(new_layouts, key=itemgetter(1))
-        t.set_description(f"Annealing outer loop, best score={new_layouts[0][1]:.3f}")
-        layouts = [l for l, _ in new_layouts[: annealing["num_layouts"]]]
-        temperature *= math.exp(-iters_per_cycle * annealing["cooling_rate"] / num_iters)
+    template = generate_key_map_template(cfg)
+    keyboard = generate_keyboard(template, cfg)
+    kwargs.update({"cfg": cfg, "template": template, "keyboard": keyboard})
 
-    best_layout = Layout.from_flat(layouts[0], kwargs["template"], kwargs["keyboard"])
+    outer_loop_iterator = trange(num_cycles, desc="Annealing")
+    try:
+        for _ in outer_loop_iterator:
+            new_layouts = []
+            with Pool(annealing["num_processes"]) as p:
+                func = partial(anneal, temperature=temperature, num_iters=iters_per_cycle, **kwargs)
+                tqdm_kwargs = dict(desc="Evaluating layouts in a pool", leave=False, total=len(layouts))
+                for proc_layouts in tqdm(p.imap(func, layouts), **tqdm_kwargs):
+                    proc_layouts = sorted(proc_layouts, key=itemgetter(1))
+                    new_layouts.extend(proc_layouts[: annealing["keep_top"]])
+            new_layouts = sorted(new_layouts, key=itemgetter(1))
+            outer_loop_iterator.set_description(f"Annealing outer loop, best score={new_layouts[0][1]:.3f}")
+            layouts = [l for l, _ in new_layouts[: annealing["num_layouts"]]]
+            temperature *= cooling_rate
+    except KeyboardInterrupt:
+        logger.warning(f"Stopping optimisation due to KeyboardInterrupt")
+        if outer_loop_iterator.n == 0:
+            t_iter = tqdm(layouts, desc="Evaluating initial layouts due to fast exit")
+            layout_energies = [(l, combine_and_evaluate(l, **kwargs)["total"]) for l in t_iter]
+            layouts = [l for l, _ in sorted(layout_energies, key=itemgetter(1))]
+
+    best_layout = Layout.from_flat(layouts[0], template, keyboard)
     return best_layout

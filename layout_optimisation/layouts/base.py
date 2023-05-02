@@ -187,31 +187,31 @@ class Layout:
             result += layer.format(cfg) + "\n"
         return result
 
-    @lru_cache(maxsize=512)
+    @lru_cache
     def get_layer(self, char: str) -> KeyMap:
         return self._layers[self._char_map[char]]
 
-    @lru_cache(maxsize=512)
+    @lru_cache
     def get_layer_idx(self, char: str) -> int:
         return self._layers.index(self.get_layer(char))
 
-    @lru_cache(maxsize=512)
+    @lru_cache
     def get_index(self, char: str) -> int:
         return self.get_layer(char).values.index(char)
 
-    @lru_cache(maxsize=512)
+    @lru_cache
     def get_hand(self, char: str) -> Hand:
         return self._keyboard._hands[self.get_index(char)]
 
-    @lru_cache(maxsize=512)
+    @lru_cache
     def get_finger(self, char: str) -> Finger:
         return self._keyboard._fingers[self.get_index(char)]
 
-    @lru_cache(maxsize=512)
+    @lru_cache
     def get_row(self, char: str) -> Finger:
         return self._keyboard._rows[self.get_index(char)]
 
-    @lru_cache(maxsize=512)
+    @lru_cache
     def get_location_penalty(self, char: str) -> int:
         return self._keyboard._penalties[self.get_index(char)]
 
@@ -222,6 +222,44 @@ class Layout:
         if keys_required is not None:
             all_keys.extend([None] * (keys_required - len(all_keys)))
         return all_keys
+
+    def for_layout(self, cfg: dict) -> str:
+        flattened = self.flatten()
+        row_lengths = Row.get_row_lengths(cfg)
+        list_lines = []
+        while flattened:
+            for length in row_lengths:
+                if length == 0:
+                    continue
+                length *= 2
+                list_lines.append(flattened[:length])
+                flattened = flattened[length:]
+
+        new_lines = []
+        for line in list_lines:
+            replacements = {r"\x08": r"\b"}
+            for key, value in replacements.items():
+                line = [value if char == key else char for char in line]
+            special_characters = ["\t", "\x1b", "\b", "\n", None]
+            if all(sc not in line for sc in special_characters):
+                line = "".join(line)
+            new_lines.append(line)
+
+        rows_per_layer = len([r for r in row_lengths if r > 0])
+        layout_lines = ["layers = []"]
+        for idx, line in enumerate(new_lines):
+            layer_name = f"LAY_{idx // rows_per_layer}"
+
+            layout_line = ""
+            layout_line += f"{layer_name} "
+            layout_line += "+= " if idx % rows_per_layer else "= "
+            layout_line += repr(line) if isinstance(line, list) else f"list({repr(line)})"
+            layout_lines.append(layout_line)
+
+            if idx % rows_per_layer == rows_per_layer - 1:
+                layout_lines.append(f"layers.append(template({layer_name}))")
+        layout_lines.append("LAY = Layout(layers)")
+        return "\n".join(layout_lines)
 
     @staticmethod
     def from_flat(flat_keys: List[str], template: KeyMap, keyboard: Keyboard = None) -> Layout:
