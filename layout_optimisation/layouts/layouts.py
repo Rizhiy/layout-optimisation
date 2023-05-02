@@ -99,6 +99,17 @@ MK3_D += ["<", None, None] + list("^!%") + [None, "~"]
 MK3_D += [None] * 6
 MK3 = Layout([template(MK3_N), template(MK3_D)])
 
+MK4_N = list("xj\"y'vwfpq")
+MK4_N += list("cian=,dstl")
+MK4_N += list("muoh:.rgbk")
+MK4_N += list("#z↓↑←→[]")
+MK4_N += ["\t", "e", "\x1b", "\b", " ", "\n"]
+MK4_D = [None, "}", "&", None, None, None] + list("?;{~")
+MK4_D += list("9753+-2468")
+MK4_D += list(")>`1*/0(_\\")
+MK4_D += list("<|@") + [None] + list("!%^$") + [None] * 6
+MK4 = Layout([template(MK4_N), template(MK4_D)])
+
 TMP_N = list('#h"jxvwfpq')
 TMP_N += list("iran=.dsty")
 TMP_N += list("umol:,cgbk")
@@ -113,16 +124,17 @@ TMP = Layout([template(TMP_N), template(TMP_D)])
 
 
 LAYOUTS = {
-    "QWERTY": QWERTY,
-    "DVORAK": DVORAK,
-    "COLEMAK": COLEMAK,
-    "WORKMAN": WORKMAN,
-    "MTGAP": MTGAP,
-    "RSTHD": RSTHD,
-    "HALMAK": HALMAK,
-    "BEAKL": BEAKL,
-    "MK1": MK1,
+    # "QWERTY": QWERTY,
+    # "DVORAK": DVORAK,
+    # "COLEMAK": COLEMAK,
+    # "WORKMAN": WORKMAN,
+    # "MTGAP": MTGAP,
+    # "RSTHD": RSTHD,
+    # "HALMAK": HALMAK,
+    # "BEAKL": BEAKL,
+    # "MK1": MK1,
     "MK2": MK2,
-    "MK3": MK3,
-    "TMP": TMP,
+    # "MK3": MK3,
+    "MK4": MK4,
+    # "TMP": TMP,
 }

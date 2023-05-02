@@ -27,18 +27,18 @@ fingers:
   MOD: [I, M, R, P]
   TMB: [T, T, T]
 penalties: # Some penalties are WPM drops from https://mathematicalmulticore.wordpress.com/2011/11/27/typing-data-preliminary-analysis/
-  location: 1
+  location: 10
   layers: [0, 5, 5]
-  same_finger: 21
-  same_hand: 8
+  same_finger: 10
+  same_hand: 10
   alternating_hand: 5
-  long_jump_finger: 20
+  long_jump_finger: 10
   long_jump_consecutive: 5
   long_jump_sandwich: 3
   long_jump_hand: 2
   roll_reversal: 10
   roll_out: 1
-  roll_in: -10.0
+  roll_in: -10
   twist: 5
   finger_disbalance: 3
   split_group: 1
@@ -73,9 +73,9 @@ frozen_keys:
   "[": 36
   "]": 37
   "=": 14
-  '.': 15
+  ",": 15
   ":": 24
-  ",": 25
+  ".": 25
 blocked_indexes: [82, 83, 84, 85, 86, 87]
 extra_groups:
   r_brackets: ["(", ")"]
