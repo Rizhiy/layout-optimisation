@@ -12,10 +12,10 @@ keys_per_row:
 # Use None for reserved keys
 key_penalties:
   NUM: []
-  TOP: [5, 3, 1.5, 2.0, 7.5]
+  TOP: [4, 3, 1.5, 2.0, 3.5]
   HOM: [2, 0, 0.0, 0.5, 2.0]
   BOT: [3.5, 0.5, 2.0, 2.5, 4]
-  MOD: [4, 4.5, 5, 5.5]
+  MOD: [5, 5.5, 6, 6.5]
   TMB: [3, 0, 2]
 # Slight penalty to the left hand keys to force more common keys on the right hand
 left_hand_penalty: 0.05
