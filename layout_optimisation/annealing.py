@@ -18,6 +18,7 @@ from .layouts.layouts import LAYOUTS
 
 logger = logging.getLogger(__name__)
 
+
 # http://mkweb.bcgsc.ca/carpalx/?simulated_annealing
 def generate_initial_layouts(cfg: dict) -> List[List[str]]:
     template = generate_key_map_template(cfg)
