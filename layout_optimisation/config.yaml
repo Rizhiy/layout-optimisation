@@ -27,7 +27,7 @@ fingers:
   MOD: [I, M, R, P]
   TMB: [T, T, T]
 penalties: # Some penalties are WPM drops from https://mathematicalmulticore.wordpress.com/2011/11/27/typing-data-preliminary-analysis/
-  location: 10
+  location: 3
   layers: [0, 5, 5]
   same_finger: 10
   same_hand: 10
@@ -87,11 +87,11 @@ annealing:
   num_layers: 2
   num_layouts: 64
   init_temperature: 10
-  num_processes: 16
-  num_iters: 10000
+  num_processes: 32
+  num_iters: 20_000
   iters_per_cycle: 200 # Don't set it too low or one version will use up all slots
   keep_top: 2 # How many to keep from each pool
-  cooling_rate: 10
+  cooling_rate: 5
 # Skip most lines to improve efficiency
 text_downsampling: 30
 disable_eval_tqdm: True
