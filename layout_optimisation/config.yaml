@@ -88,7 +88,7 @@ annealing:
   num_layouts: 78
   init_temperature: 10
   final_temperature: 0.01
-  num_processes: 26
+  num_processes: 26  # I have 32 cores (16+HT), leave 6 cores free for computer to work comfortably
   num_iters: 20_000
   iters_per_cycle: 200  # Don't set it too low or one version will use up all slots
   # How many to keep from each layout improvement

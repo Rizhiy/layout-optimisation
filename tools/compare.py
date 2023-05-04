@@ -16,11 +16,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument("names", type=str, nargs="*", default=list(LAYOUTS.keys()))
 args = complete_and_parse_args(parser)
 
-
-# These penalties are optimisation constraints, rather than real metrics
-cfg["penalties"]["frozen_keys"] = 0
-cfg["penalties"]["blocked_indexes"] = 0
-
 template = generate_key_map_template(cfg)
 keyboard = generate_keyboard(template, cfg)
 
