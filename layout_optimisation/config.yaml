@@ -27,7 +27,7 @@ fingers:
   MOD: [I, M, R, P]
   TMB: [T, T, T]
 penalties: # Some penalties are WPM drops from https://mathematicalmulticore.wordpress.com/2011/11/27/typing-data-preliminary-analysis/
-  location: 3
+  location: 2
   layers: [0, 5, 5]
   same_finger: 10
   same_hand: 10
@@ -85,17 +85,16 @@ extra_groups:
 ignore_loc_penality_for_chars: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "-", "*", "/", "#"]
 annealing:
   num_layers: 2
-  num_layouts: 64
+  num_layouts: 78
   init_temperature: 10
-  final_temperature: 0.1
-  num_processes: 22
+  final_temperature: 0.01
+  num_processes: 26
   num_iters: 20_000
   iters_per_cycle: 200  # Don't set it too low or one version will use up all slots
   # How many to keep from each layout improvement
   # It will take log_(keep_top)(num_layouts) loops for one version to dominate all trial slots
+  # Must be more than one for algorithm to work properly
   keep_top: 2
-  # This is per iteration, will be adjusted for loops
-  cooling_rate: 0.9999
 # Skip most lines to improve efficiency
 text_downsampling: 30
 disable_eval_tqdm: True
