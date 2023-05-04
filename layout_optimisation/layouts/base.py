@@ -246,19 +246,16 @@ class Layout:
             new_lines.append(line)
 
         rows_per_layer = len([r for r in row_lengths if r > 0])
-        layout_lines = ["layers = []"]
+        layout_lines = []
         for idx, line in enumerate(new_lines):
             layer_name = f"LAY_{idx // rows_per_layer}"
-
-            layout_line = ""
-            layout_line += f"{layer_name} "
+            layout_line = f"{layer_name} "
             layout_line += "+= " if idx % rows_per_layer else "= "
             layout_line += repr(line) if isinstance(line, list) else f"list({repr(line)})"
             layout_lines.append(layout_line)
 
-            if idx % rows_per_layer == rows_per_layer - 1:
-                layout_lines.append(f"layers.append(template({layer_name}))")
-        layout_lines.append("LAY = Layout(layers)")
+        templates = [f"template(LAY_{i})" for i in len(new_lines) // rows_per_layer + 1]
+        layout_lines.append(f"LAY = Layout([{','.join(templates)}])")
         return "\n".join(layout_lines)
 
     @staticmethod
