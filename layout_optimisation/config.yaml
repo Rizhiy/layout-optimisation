@@ -95,8 +95,8 @@ annealing:
   # It will take log_(keep_top)(num_layouts) loops for one version to dominate all trial slots
   # Must be more than one for algorithm to work properly
   keep_top: 2
-# Skip most lines to improve efficiency
-text_downsampling: 30
+# Skip most lines to improve efficiency, 1 = use everything
+text_downsampling: 29
 disable_eval_tqdm: True
 dir_weights:
   prose: 3
