@@ -254,7 +254,7 @@ class Layout:
             layout_line += repr(line) if isinstance(line, list) else f"list({repr(line)})"
             layout_lines.append(layout_line)
 
-        templates = [f"template(LAY_{i})" for i in len(new_lines) // rows_per_layer + 1]
+        templates = [f"template(LAY_{i})" for i in range(len(new_lines) // rows_per_layer)]
         layout_lines.append(f"LAY = Layout([{','.join(templates)}])")
         return "\n".join(layout_lines)
 

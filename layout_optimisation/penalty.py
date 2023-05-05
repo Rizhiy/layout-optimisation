@@ -190,7 +190,7 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
     total += twist_penalty
     logger.info(f"Twist: {twist_penalty:.3f}")
 
-    # Finger disbalance, count only index middle and ring fingers
+    # Finger disbalance, count only index, middle and ring fingers
     i_m_r = np.sum(i_finger), np.sum(m_finger), np.sum(r_finger)
     finger_disbalance_penalty = (max(i_m_r) - min(i_m_r)) / text_len
     finger_disbalance_penalty *= penalties["finger_disbalance"]
