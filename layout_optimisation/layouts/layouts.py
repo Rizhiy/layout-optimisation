@@ -149,6 +149,18 @@ MK7_D += ["<", "^", ">", None, None, "@", "$", None]
 MK7_D += [None, None, None, None, None, None]
 MK7 = Layout([template(MK7_N), template(MK7_D)])
 
+MK8_0 = list("jfuz&qxldb")
+MK8_0 += list("maio=,stnp")
+MK8_0 += list("vywh:.rgck")
+MK8_0 += list("!#↓↑←→[]")
+MK8_0 += ["\t", "e", "\x1b", "\x08", " ", "\n"]
+MK8_1 = ["<", ";", '"', "|", "~", None, "{", "_", "(", "%"]
+MK8_1 += list("9753+-2468")
+MK8_1 += ["`", "'", ")", "1", "*", "/", "0", "?", None, "\\"]
+MK8_1 += ["}", "^", ">", None, None, "@", "$", None]
+MK8_1 += [None, None, None, None, None, None]
+MK8 = Layout([template(MK8_0), template(MK8_1)])
+
 TMP_N = list('#h"jxvwfpq')
 TMP_N += list("iran=.dsty")
 TMP_N += list("umol:,cgbk")
@@ -177,5 +189,6 @@ LAYOUTS = {
     "MK5": MK5,
     "MK6": MK6,
     "MK7": MK7,
+    "MK8": MK8,
     "TMP": TMP,
 }

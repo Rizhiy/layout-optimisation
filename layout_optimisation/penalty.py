@@ -106,10 +106,10 @@ def calculate_penalties(text: str, layout: Layout, cfg: dict) -> Dict[str, float
     total += same_hand_penalty
     logger.info(f"Same hand: {same_hand_penalty:.3f}")
 
-    # Alternating hand three times in a row
+    # Alternating hand four times in a row
     diff_hand = hands[:-1] != hands[1:]
-    diff_hand_3_times = diff_hand[2:] & diff_hand[1:-1] & diff_hand[:-2]
-    alternating_hand_penalty = penalties["alternating_hand"] * np.sum(diff_hand_3_times) / text_len
+    diff_hand_4 = diff_hand[2:] & diff_hand[1:-1] & diff_hand[:-2]
+    alternating_hand_penalty = penalties["alternating_hand"] * np.sum(diff_hand_4) / text_len
     total += alternating_hand_penalty
     logger.info(f"Alternating hand: {alternating_hand_penalty:.3f}")
 
