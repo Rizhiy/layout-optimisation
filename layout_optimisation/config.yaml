@@ -27,7 +27,7 @@ fingers:
   MOD: [I, M, R, P]
   TMB: [T, T, T]
 penalties: # Some penalties are WPM drops from https://mathematicalmulticore.wordpress.com/2011/11/27/typing-data-preliminary-analysis/
-  location: 2
+  location: 1
   layers: [0, 5, 5]
   same_finger: 10
   same_hand: 10
@@ -86,11 +86,19 @@ ignore_loc_penality_for_chars: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
 annealing:
   num_layers: 2
   num_layouts: 78
-  init_temperature: 10
+  # Temperature only matters for swaps which increase energy
+  # Allow condition = energ_diff < 0 or exp(-energy_diff / temperature) > uniform(0, 1)
+  # Temperature \ Negative increase and chance of success:
+  #      | 0.01 0.1 1.0
+  # 1.0  | 99%  90% 36%
+  # 0.1  | 90%  36% 00%
+  # 0.01 | 37%  00% 00%
+  # Differences in temperature less than 0.01 don't matter that much, so lowest reasonable temperature is 0.01
+  init_temperature: 1.0
   final_temperature: 0.01
   num_processes: 26  # I have 32 cores (16+HT), leave 6 cores free for computer to work comfortably
-  num_iters: 20_000
-  iters_per_cycle: 200  # Don't set it too low or one version will use up all slots
+  num_iters: 12_000
+  iters_per_cycle: 300  # Don't set it too low or one version will use up all slots
   # How many to keep from each layout improvement
   # It will take log_(keep_top)(num_layouts) loops for one version to dominate all trial slots
   # Must be more than one for algorithm to work properly
