@@ -97,9 +97,11 @@ def run_annealing(cfg: dict, **kwargs) -> Layout:
                     proc_layouts = sorted(proc_layouts, key=itemgetter(1))
                     new_layouts.extend(proc_layouts[: annealing["keep_top"]])
             new_layouts = sorted(new_layouts, key=itemgetter(1))
-            outer_loop_iterator.set_description(f"Annealing outer loop, best score={new_layouts[0][1]:.3f}")
             layouts = [l for l, _ in new_layouts[: annealing["num_layouts"]]]
             temperature *= cooling_rate
+            outer_loop_iterator.set_description(
+                f"Annealing outer loop, best score={new_layouts[0][1]:.3f}, {temperature=:.2f}"
+            )
     except KeyboardInterrupt:
         logger.warning(f"Stopping optimisation due to KeyboardInterrupt")
         if outer_loop_iterator.n == 0:
