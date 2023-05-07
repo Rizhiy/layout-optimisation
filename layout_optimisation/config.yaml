@@ -40,7 +40,7 @@ penalties: # Some penalties are WPM drops from https://mathematicalmulticore.wor
   roll_out: 1
   roll_in: -10
   twist: 5
-  finger_disbalance: 3
+  finger_disbalance: 0.5
   split_group: 1
   frozen_keys: 1
   blocked_indexes: 1
@@ -94,10 +94,10 @@ annealing:
   # 0.1  | 90%  36% 00%
   # 0.01 | 37%  00% 00%
   # Differences in temperature less than 0.01 don't matter that much, so lowest reasonable temperature is 0.01
-  init_temperature: 1.0
+  init_temperature: 0.2
   final_temperature: 0.01
   num_processes: 26  # I have 32 cores (16+HT), leave 6 cores free for computer to work comfortably
-  num_iters: 12_000
+  num_iters: 6_000
   iters_per_cycle: 300  # Don't set it too low or one version will use up all slots
   # How many to keep from each layout improvement
   # It will take log_(keep_top)(num_layouts) loops for one version to dominate all trial slots
