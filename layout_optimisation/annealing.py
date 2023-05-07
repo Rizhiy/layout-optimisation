@@ -26,7 +26,7 @@ def generate_initial_layouts(cfg: dict) -> List[List[str]]:
     template = generate_key_map_template(cfg)
     keyboard = generate_keyboard(template, cfg)
 
-    total_keys = len(template) * cfg["annealing"]["num_layers"]
+    total_keys = len(template) * cfg["annealing"]["max_layers"]
     layouts = []
     for l_name, layout in LAYOUTS.items():
         flat_keys = layout.flatten(total_keys)
