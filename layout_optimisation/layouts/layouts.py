@@ -161,17 +161,53 @@ MK8_1 += ["}", "^", ">", None, None, "@", "$", None]
 MK8_1 += [None, None, None, None, None, None]
 MK8 = Layout([template(MK8_0), template(MK8_1)])
 
-TMP_N = list('#h"jxvwfpq')
-TMP_N += list("iran=.dsty")
-TMP_N += list("umol:,cgbk")
-TMP_N += list("'z↓↑←→[]")
-TMP_N += ["\t", "e", "\x1b", "\b", " ", "\n"]
-TMP_D = [None] + list(">|&@$?(_") + [None]
-TMP_D += list("9753+-2468")
-TMP_D += list(")}`1*/0;{\\")
-TMP_D += ["<", None, None] + list("^!%") + [None, "~"]
-TMP_D += [None] * 6
-TMP = Layout([template(TMP_N), template(TMP_D)])
+MK9_0 = list("jfuz&qkldb")
+MK9_0 += list("mhio=,stnp")
+MK9_0 += list("vywa:.rgcx")
+MK9_0 += list('"#↓↑←→[]')
+MK9_0 += ["\t", "e", "\x1b", "\x08", " ", "\n"]
+MK9_1 = ["}", "'", "!", "?", "~", None, "^", "_", "(", "%"]
+MK9_1 += list("9753+-2468")
+MK9_1 += ["`", "{", ")", "1", "*", "/", "0", None, None, ";"]
+MK9_1 += ["<", "\\", ">", "|", None, "@", "$", None]
+MK9_1 += [None, None, None, None, None, None]
+MK9 = Layout([template(MK9_0), template(MK9_1)])
+
+MK10_0 = list("'fu\"q;kdlb")
+MK10_0 += list("mhio=,stnc")
+MK10_0 += list("vpya:.rwgx")
+MK10_0 += list("zj↓↑←→[]")
+MK10_0 += ["\t", "e", "\x1b", "\x08", " ", "\n"]
+MK10_1 = list("|!%>~?}_(@")
+MK10_1 += list("9753+-2468")
+MK10_1 += ["&", "{", ")", "1", "*", "/", "0", None, None, None]
+MK10_1 += ["^", "`", "<", "#", None, "\\", "$", None]
+MK10_1 += [None, None, None, None, None, None]
+MK10 = Layout([template(MK10_0), template(MK10_1)])
+
+MK11_0 = list('jfu"qzkldb')
+MK11_0 += list("mhio=,stnc")
+MK11_0 += list("vpya:.rwgx")
+MK11_0 += [None, None, "↓", "↑", "←", "→", None, None]
+MK11_0 += ["\t", "e", "\x1b", "\x08", " ", "\n"]
+MK11_1 = list("}'%^~?`(_{")
+MK11_1 += list("9753+-2468")
+MK11_1 += list("&])1*/0;![")
+MK11_1 += ["|", "$", "<", None, "\\", "#", ">", "@"]
+MK11_1 += [None, None, None, None, None, None]
+MK11 = Layout([template(MK11_0), template(MK11_1)])
+
+TMP_0 = list('jfu"qzkdlb')
+TMP_0 += list("mhio=,stnc")
+TMP_0 += list("vpya:.rwgx")
+TMP_0 += [None, None, *list("↓↑←→"), None, None]
+TMP_0 += ["\t", "e", "\x1b", "\x08", " ", "\n"]
+TMP_1 = list("|!%>~?}_(@")
+TMP_1 += list("9753+-2468")
+TMP_1 += ["&", "{", ")", "1", "*", "/", "0", ";", "'", None]
+TMP_1 += ["^", "`", "<", "#", "$", "\\", "[", "]"]
+TMP_1 += [None, None, None, None, None, None]
+TMP = Layout([template(TMP_0), template(TMP_1)])
 
 LAYOUTS = {
     "QWERTY": QWERTY,
@@ -190,5 +226,8 @@ LAYOUTS = {
     "MK6": MK6,
     "MK7": MK7,
     "MK8": MK8,
+    "MK9": MK9,
+    "MK10": MK10,
+    "MK11": MK11,
     "TMP": TMP,
 }
